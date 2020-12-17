@@ -1,54 +1,70 @@
 <template>
-  <table>
-    <thead>
-      <tr class="bg-gray-100 border-b-2 border-gray-400">
-        <th></th>
-        <th>
-          <span>Ranking</span>
-        </th>
-        <th>Nombre</th>
-        <th>Precio</th>
-        <th>Cap. de Mercado</th>
-        <th>Variación 24hs</th>
-        <td class="hidden sm:block"></td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        class="border-b border-gray-200 hover:bg-gray-100 hover:bg-orange-100"
-      >
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="hidden sm:block"></td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <table>
+      <thead>
+        <tr class="bg-gray-100 border-b-2 border-gray-400">
+          <th></th>
+          <th>
+            <span>Ranking</span>
+          </th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Cap. de Mercado</th>
+          <th>Variación 24hs</th>
+          <td class="hidden sm:block"></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="asset in assets"
+          v-bind:key="asset.id"
+          class="border-b border-gray-200 hover:bg-gray-100 hover:bg-orange-100"
+        >
+          <td>
+            <img
+              class="w-6 h-6"
+              v-bind:src="
+                `https://static.coincap.io/assets/icons/${asset.symbol.toLowerCase()}@2x.png`
+              "
+              v-bind:alt="asset.name"
+            />
+          </td>
+          <td>
+            <b>#{{ asset.rank }}</b>
+          </td>
+          <td>{{ asset.name }}</td>
+          <td>{{ asset.priceUsd | dollar }}</td>
+          <td>{{ asset.marketCapUsd | dollar }}</td>
+          <td v-bind:class="asset.changePercent24Hr.includes('-') ? 'text-red-600' : 'text-green-600'">
+            {{ asset.changePercent24Hr | percent }}
+          </td>
+          <td class="hidden sm:block"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "PxAssetsTable",
+  name: 'PxAssetsTable',
 
   props: {
     assets: {
       type: Array,
-      default: () => []
-    }
-  }
+      default: () => [],
+    },
+  },
 };
 </script>
 
 <style scoped>
 .up::before {
-  content: "👆";
+  content: '👆';
 }
 
 .down::before {
-  content: "👇";
+  content: '👇';
 }
 
 td {
