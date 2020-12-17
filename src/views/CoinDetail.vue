@@ -79,17 +79,50 @@
         :max="max"
         :data="chartData"
       ></line-chart>
+      <h3 class="text-xl my-10">Mejores Ofertas de Cambio</h3>
+      <table>
+        <tr
+          v-for="m in markets"
+          :key="`${m.exchangeId}-${m.priceUsd}`"
+          class="border-b"
+        >
+          <td>
+            <b>{{ m.exchangeId }}</b>
+          </td>
+          <td>{{ m.priceUsd | dollar }}</td>
+          <td>{{ m.baseSymbol }} / {{ m.quoteSymbol }}</td>
+          <td>
+            <px-button
+              :is-loading="m.isLoading || false"
+              v-if="!m.url"
+              @click="getWebSite(m)"
+            >
+              Obtener Link
+            </px-button>
+            <a
+              :href="m.url"
+              v-else
+              class="hover:underline text-green-600"
+              target="_blank"
+              >{{ m.url }}</a
+            >
+          </td>
+        </tr>
+      </table>
     </template>
   </div>
 </template>
 <script>
 import api from '@/api';
+import PxButton from '@/components/PxButton';
 
 export default {
   name: 'CoinDetail',
+  components: { PxButton },
   data: function() {
     return {
       asset: {},
+      markets: [],
       isLoading: false,
       historyPrices: [],
       chartData: [],
@@ -116,16 +149,33 @@ export default {
     },
   },
   methods: {
+    getWebSite: function(exchange) {
+      this.$set(exchange, 'isLoading', true);
+      return api
+        .getExchange(exchange.exchangeId)
+        .then(res => {
+          if (res) this.$set(exchange, 'url', res.exchangeUrl);
+        })
+        .finally(() => (exchange.isLoading = false));
+    },
     getCoin: function() {
       const id = this.$route.params.id;
       this.isLoading = true;
-      Promise.all([api.getAssetById(id), api.getAssetHistory(id)])
-        .then(([asset, history]) => {
+      Promise.all([
+        api.getAssetById(id),
+        api.getAssetHistory(id),
+        api.getMarkets(id),
+      ])
+        .then(([asset, history, markets]) => {
           this.asset = asset;
           this.historyPrices = history.map(h =>
             parseFloat(h.priceUsd).toFixed(2),
           );
-          this.chartData = history.map(h => [h.date, parseFloat(h.priceUsd).toFixed(2)]);
+          this.chartData = history.map(h => [
+            h.date,
+            parseFloat(h.priceUsd).toFixed(2),
+          ]);
+          this.markets = markets;
         })
         .finally(() => (this.isLoading = false));
     },

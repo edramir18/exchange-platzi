@@ -23,8 +23,22 @@ function getAssetHistory(coin) {
     .then(json => json.data);
 }
 
+function getMarkets(coin) {
+  return fetch(`${url}/assets/${coin}/markets?limit=5`)
+    .then(res => res.json())
+    .then(json => json.data);
+}
+
+function getExchange(id) {
+  return fetch(`${url}/exchanges/${id}`)
+    .then(res => res.json())
+    .then(json => json.data);
+}
+
 export default {
   getAssets: getAssets,
   getAssetById: getAssetById,
   getAssetHistory: getAssetHistory,
+  getMarkets: getMarkets,
+  getExchange: getExchange,
 };
