@@ -1,5 +1,15 @@
 <template>
-  <px-assets-table v-bind:assets="assets"></px-assets-table>
+  <div>
+    <bounce-loader
+      :loading="isLoading"
+      :color="'#68d391'"
+      :size="100"
+    ></bounce-loader>
+    <px-assets-table
+      v-show="!isLoading"
+      v-bind:assets="assets"
+    ></px-assets-table>
+  </div>
 </template>
 
 <script>
@@ -13,11 +23,16 @@ export default {
   },
   data: function() {
     return {
+      isLoading: false,
       assets: [],
     };
   },
   created: function() {
-    api.getAssets().then(assets => (this.assets = assets));
+    this.isLoading = true;
+    api
+      .getAssets()
+      .then(assets => (this.assets = assets))
+      .finally(() => (this.isLoading = false));
   },
 };
 </script>
