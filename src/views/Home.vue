@@ -1,5 +1,5 @@
 <template>
-  <px-assets-table v-bind:assets="assets" ></px-assets-table>
+  <px-assets-table v-bind:assets="assets"></px-assets-table>
 </template>
 
 <script>
@@ -9,15 +9,15 @@ import api from '@/api';
 export default {
   name: 'Home',
   components: {
-    PxAssetsTable
+    PxAssetsTable,
   },
   data: function() {
     return {
-      assets: []
+      assets: [],
     };
   },
   created: function() {
     api.getAssets().then(assets => (this.assets = assets));
-  }
+  },
 };
 </script>

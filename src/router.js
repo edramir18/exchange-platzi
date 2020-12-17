@@ -13,23 +13,23 @@ export default new Router({
   routes: [
     {
       path: '/',
-      home: 'home',
-      component: Home
+      name: 'home',
+      component: Home,
     },
     {
       path: '/about',
       name: 'about',
-      component: About
+      component: About,
     },
     {
       path: '/coin/:id',
       name: 'coin-detail',
-      component: CoinDetail
+      component: CoinDetail,
     },
     {
       path: '*',
       name: 'Error',
-      component: Error
-    }
-  ]
+      component: Error,
+    },
+  ],
 });
